@@ -31,11 +31,19 @@ public:
 	}
 
 	bool compare_and_replace(const std::pair<std::string, std::string>& pair) {
-		auto pos = data.find(pair.first);
-		if (pos == std::string::npos)
-			return false;
-		data.replace(pos,pair.first.size(),pair.second);
-		return true;
+		std::pair<const char*, const char*> pos;
+		unsigned count = 0;
+		do{
+			auto pos = match(pair.first.c_str(), data.c_str());
+			if (!pos.second)
+				break;
+			++count;
+			data.replace(
+				data.begin()+(pos.first-data.data()), 
+				data.begin() + (pos.second - data.data()),
+			pair.second);
+		} while (true);
+		return count != 0;
 	}
 
 	std::string raw_string() const {
@@ -244,7 +252,7 @@ inline std::unique_ptr<BTDict> Parse(const char* bt_filename) {
 
 		auto list_ptr = std::make_unique<BTList>();
 
-		do {
+		while (get_current_char() != 'e'){
 			switch (get_current_char())
 			{
 			case 'i':
@@ -260,7 +268,7 @@ inline std::unique_ptr<BTDict> Parse(const char* bt_filename) {
 				list_ptr->attach(std::make_unique<BTString>(parse_str()));
 				break;
 			}
-		} while (get_current_char() != 'e');
+		};
 
 		get_current_char_move();
 
@@ -274,7 +282,7 @@ inline std::unique_ptr<BTDict> Parse(const char* bt_filename) {
 		auto dict_ptr = std::make_unique<BTDict>();
 		
 
-		do {
+		while (get_current_char() != 'e') {
 			std::string key;
 			try{
 				key = parse_str();
@@ -298,7 +306,7 @@ inline std::unique_ptr<BTDict> Parse(const char* bt_filename) {
 				dict_ptr->attach(std::move(key),std::make_unique<BTString>(parse_str()));
 				break;
 			}
-		} while (get_current_char() != 'e');
+		} ;
 
 		get_current_char_move();
 

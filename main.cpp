@@ -20,10 +20,11 @@ int main(int argc, char* argv[])
 {
 	if (argc == 1) {
 		printf(
-			R"(bt_tool v0.1:一个修改bt种子的小工具
+			R"(bt_tool v0.2:一个修改bt种子的小工具
 参数:
   -d bt种子地址...			//下载torrent文件{地址格式:xx.xx.xx/xxxx.torrent}
   -r bt种子文件名 名字对...	//名字对{匹配名:替换名},将BT种子中为匹配名的字符替换为替换名
+							//匹配名包含空格请用“” 列如: "小 m":大M
   -h bthash值...				//解析hash对应的种子文件并下载
 )");
 	}
@@ -53,6 +54,9 @@ int main(int argc, char* argv[])
 		std::vector<std::pair<std::string, std::string>> pairs;
 		for (unsigned i = 3; i != argc;++i) {
 			std::string first(argv[i]);
+			if (first[0] == '\"') {
+				first = first.substr(1, first.size() - 2);
+			}
 			auto colon_pos = first.find(':');
 			auto second = first.substr(colon_pos + 1, first.size() - colon_pos - 1);
 			first.resize(colon_pos);
