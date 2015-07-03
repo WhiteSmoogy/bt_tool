@@ -47,18 +47,19 @@ private:
 
 class BTInt : public BTData {
 public:
-	BTInt(long _int)
+	BTInt(__int64 _int)
 		:data(_int) {
 	}
 
 	std::string bencoding() const {
 		char head[34] = "i";
-		std::string str{ _ltoa(data,head+1,10)-1 };
+		_i64toa_s(data, head + 1, 33, 10);
+		std::string str{head};
 		str.push_back('e');
 		return str;
 	}
 private:
-	long  data;
+	__int64  data;
 };
 
 
@@ -234,7 +235,7 @@ inline std::unique_ptr<BTDict> Parse(const char* bt_filename) {
 		while ( (current_char = get_current_char_move()) != 'e') {
 			num_str.push_back(current_char);
 		}
-		return std::stol(num_str);
+		return std::stoll(num_str);
 	};
 
 	parse_list = [&]() {

@@ -87,11 +87,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	auto i_think_cry = "i think cry";
-	auto regex_cry = "ia*";
-	auto result_one = match(regex_cry, i_think_cry);
-	regex_cry = "ia+";
-	auto result_two = match(regex_cry, i_think_cry);
 	return 0;
 }
 
@@ -131,6 +126,19 @@ std::string to_utf8string(const std::wstring& string)
 	std::string mstr(m_Len, wchar_t());
 	char * m_str = &mstr[0];
 	::WideCharToMultiByte(CP_UTF8, 0, string.c_str(), string.length(), m_str, m_Len, {}, {});
+	return mstr;
+}
+
+std::string utf8_tostring(const std::string& string) {
+	const int w_Len(::MultiByteToWideChar(CP_UTF8, 0, string.c_str(), string.length(), {}, 0));
+	std::wstring wstr(w_Len, wchar_t());
+	wchar_t * w_str = &wstr[0];
+	::MultiByteToWideChar(CP_UTF8, 0, string.c_str(), string.length(), w_str, w_Len);
+
+	const int m_Len(::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.length(), {}, 0, {}, {}));
+	std::string mstr(m_Len, wchar_t());
+	char * m_str = &mstr[0];
+	::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.length(), m_str, m_Len, {}, {});
 	return mstr;
 }
 
@@ -233,7 +241,9 @@ void retorrentname(const string& store_name) {
 
 	auto dict_ptr = Parse(store_name.c_str());
 
+	//convert to CAP...
 	std::string new_name = dict_ptr->get_name();
+	new_name = utf8_tostring(new_name);
 
 	new_name += ".torrent";
 	std::rename(store_name.c_str(), new_name.c_str());
