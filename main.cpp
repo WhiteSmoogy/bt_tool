@@ -16,6 +16,7 @@ void retorrentname(const string& store_name);
 
 #include <exception>
 #include "BT.h"
+#include "thunder.h"
 int main(int argc, char* argv[])
 {
 	if (argc == 1) {
@@ -26,6 +27,7 @@ int main(int argc, char* argv[])
   -r bt种子文件名 名字对...	//名字对{匹配名:替换名},将BT种子中为匹配名的字符替换为替换名
 							//匹配名包含空格请用“” 列如: "小 m":大M
   -h bthash值...				//解析hash对应的种子文件并下载
+  -c [迅雷目录]				//破解迅雷的高数通道
 )");
 	}
 	else if (!strcmp(argv[1], "-d")) {
@@ -62,11 +64,11 @@ int main(int argc, char* argv[])
 			first.resize(colon_pos);
 			first = to_utf8string(to_wstring(first));
 			second = to_utf8string(to_wstring(second));
-			pairs.emplace_back(std::pair<std::string, std::string>{first,second});
+			pairs.emplace_back(std::pair<std::string, std::string>{first, second});
 		}
 		dict_ptr->replace(pairs);
 		auto benconding = dict_ptr->bencoding();
-		
+
 		std::ofstream fout(argv[2], std::ios::binary);
 		fout.write(benconding.c_str(), benconding.size());
 	}
@@ -77,17 +79,30 @@ int main(int argc, char* argv[])
 		}
 		for (unsigned i = 2;i != argc;++i) {
 			auto old_name = std::string(argv[i]) + ".torrent";
-			try{
+			try {
 				download_torrent(expack_hash_url(argv[i]), old_name);
 				goto exmethod;
 			}
 			catch (std::exception& e) {
-				printf("Error:无法从迅雷种子库获取该 %s 值的种子文件\n\tError: %s",argv[i],e.what());
+				printf("Error:无法从迅雷种子库获取该 %s 值的种子文件\n\tError: %s", argv[i], e.what());
 			}
 			//another method
 
-			exmethod:
-				retorrentname(old_name);
+		exmethod:
+			retorrentname(old_name);
+		}
+	}
+	else if (!strcmp(argv[1], "-c")) {
+		int count = 0;
+		try {
+			if (argc >= 3)
+				count = crack_highspeedstream(argv[2]);
+			else
+				count = crack_highspeedstream();
+			std::printf("破解成功：一共破解了 %d 个高速通道\n",count);
+		}
+		catch (std::exception& e) {
+			std::printf("破解高速通道出错: %s\n", e.what());
 		}
 	}
 
@@ -241,7 +256,7 @@ std::string expack_hash_url(const char* hash) {
 }
 
 void retorrentname(const string& store_name) {
-	
+
 
 	auto dict_ptr = Parse(store_name.c_str());
 
@@ -252,3 +267,5 @@ void retorrentname(const string& store_name) {
 	new_name += ".torrent";
 	std::rename(store_name.c_str(), new_name.c_str());
 }
+
+
