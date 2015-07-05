@@ -1,7 +1,8 @@
 #pragma once
 
 #include <utility>
-
+#include <string>
+std::string utf8_tostring(const std::string& string);
 std::pair<const char*,const char*> match(const char* regexp,const char* text);
 std::pair<const wchar_t*, const wchar_t*> match(wchar_t* regexp, wchar_t* text);
 std::pair<const char16_t*, const char16_t*> match(char16_t* regexp, char16_t* text);
