@@ -18,20 +18,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="simpleregex.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="thunder.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="BT.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="BT.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -41,5 +27,10 @@
     <ClInclude Include="thunder.h">
       <Filter>头文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllexport.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
