@@ -34,6 +34,7 @@ int main() {
 
 		++iter;
 	}
-
-	return 0;
+	if(FreeLibrary(module))
+		return 0;
+	return -1;
 }
